@@ -2,6 +2,12 @@
 
 Youzan SDK for Python
 
+# Installation
+
+```
+pip install youzan
+```
+
 # Example
 
 ```
