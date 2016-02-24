@@ -10,21 +10,29 @@ API_BASE = 'https://open.koudaitong.com/api/entry'
 
 class YouZan(object):
     """docstring for YouZan"""
-    def __init__(self, app_id, app_secert):
+    def __init__(self, app_id=None, app_secert=None):
         self.app_id = app_id
         self.app_secert = app_secert
         self.format = 'json'
         self.v = '1.0'
         self.sign_method = 'md5'
-        self.arg_dict = {
-            'app_id': self.app_id,
-            'format': self.format,
-            'sign_method': self.sign_method,
-            'v': self.v
-        }
+        self._arg_dict = {}
+
+    def get_arg_dict(self):
+        self._arg_dict['app_id'] = self.app_id
+        self._arg_dict['format'] = self.format
+        self._arg_dict['sign_method'] = self.sign_method
+        self._arg_dict['v'] = self.v
+        return self._arg_dict
+
+    def set_arg_dict(self, key, value):
+        self._arg_dict[key] = value
+
+    def merge_arg_dict(self, args):
+        self._arg_dict = dict(self._arg_dict, **args)
 
     def get_sign(self):
-        arg_dict = sorted(self.arg_dict.iteritems(), key=lambda d: d[0])
+        arg_dict = sorted(self.get_arg_dict().iteritems(), key=lambda d: d[0])
         arg_str = ''.join(
             [''.join([str(i) for i in item]) for item in arg_dict])
         arg_str = "{}{}{}".format(self.app_secert, arg_str, self.app_secert)
@@ -34,12 +42,11 @@ class YouZan(object):
         self.method = method
         self.args = args
         self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.arg_dict['method'] = method
-        self.arg_dict['timestamp'] = self.timestamp
-        self.arg_dict = dict(self.arg_dict, **self.args)
+        self.set_arg_dict('method', method)
+        self.set_arg_dict('timestamp', self.timestamp)
+        self.merge_arg_dict(args)
 
-        payload = self.arg_dict
+        payload = self.get_arg_dict()
         payload['sign'] = self.get_sign()
         r = requests.get(API_BASE, params=payload)
         return r.json()
-
