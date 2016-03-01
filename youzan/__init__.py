@@ -32,13 +32,14 @@ class YouZan(object):
         self._arg_dict = dict(self._arg_dict, **args)
 
     def get_sign(self):
-        arg_dict = sorted(self.get_arg_dict().iteritems(), key=lambda d: d[0])
         arg_str = ''.join(
-            [''.join([str(i) for i in item]) for item in arg_dict])
+            ['%s%s' % (key, self.get_arg_dict()[key])
+                for key in sorted(self.get_arg_dict())])
         arg_str = "{}{}{}".format(self.app_secert, arg_str, self.app_secert)
-        return hashlib.md5(arg_str).hexdigest()
+        return hashlib.md5(arg_str).hexdigest().lower()
 
     def __call__(self, method, **args):
+        self._arg_dict = {}
         self.method = method
         self.args = args
         self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
