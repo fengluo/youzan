@@ -9,7 +9,7 @@ from setuptools import setup
 
 setup(
     name='youzan',
-    version='0.1.2',
+    version='0.1.3',
     url='https://github.com/fengluo/youzan',
     license='MIT',
     author='fengluo',
